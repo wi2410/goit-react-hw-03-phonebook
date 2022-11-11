@@ -3,14 +3,28 @@ import PropTypes from 'prop-types';
 import ContactForm from './ContactForm/ContactForm';
 import ContactList from './ContactList/ContactList';
 import Filter from './Filter/Filter';
-import defaultContacts from './contacts';
+// import defaultContacts from './contacts';
 import { Container } from './App.styled';
 
 export class App extends Component {
   state = {
-    contacts: defaultContacts,
+    contacts: [],
     filter: '',
   };
+
+  componentDidMount() {
+    const contacts = localStorage.getItem('contacts');
+    const parsedContacts = JSON.parse(contacts);
+    if (parsedContacts) {
+      this.setState({contacts: parsedContacts})
+    }
+  }
+  
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.contacts !== prevState.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
 
   handleSubmitInfo = data => {
     const findContact = this.state.contacts.find(el => el.name === data.name);
